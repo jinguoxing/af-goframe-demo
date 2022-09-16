@@ -6,6 +6,11 @@ import (
     "github.com/gin-gonic/gin"
     "github.com/zeromicro/go-zero/core/logx"
     "time"
+
+    swaggerFiles "github.com/swaggo/files"
+    ginSwagger "github.com/swaggo/gin-swagger"
+
+    _ "af-goframe-demo/gin/docs"
 )
 
 
@@ -21,7 +26,7 @@ func main(){
 
 
     r.Use(ginMiddleWare.GinZap(writer,time.RFC3339, false))
-   // r.Use(ginMiddleWare.RecoveryWithZap(writer,true))
+    r.Use(ginMiddleWare.RecoveryWithZap(writer,true))
 
 
     r.GET("/ping", func(c *gin.Context) {
@@ -32,6 +37,8 @@ func main(){
     r.GET("/panic", func(c *gin.Context) {
         panic("An unexpected error happen!")
     })
+
+    r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
     r.Run()
 
