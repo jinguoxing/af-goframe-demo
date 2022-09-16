@@ -1,14 +1,13 @@
 package main
 
 import (
+    af_go_frame "af-go-frame"
     "af-go-frame/core/config"
     "af-go-frame/core/config/file"
-    af_go_frame "af-go-frame"
     "af-goframe-demo/dddDemo/infrastructure/conf"
     "flag"
 
     "af-go-frame/core/transport/rest"
-
 )
 
 
@@ -46,7 +45,8 @@ func main(){
         panic(err)
     }
 
-    var bc conf.Bootstrap
+    var bc  conf.Bootstrap
+
     if err := c.Scan(&bc); err != nil {
         panic(err)
     }

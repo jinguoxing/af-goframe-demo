@@ -20,17 +20,16 @@ func NewGreeterService(uc *greeter.GreeterUsecase) *GreeterService{
 
 }
 
-// SayHello implements helloworld.GreeterServer.
 func (s *GreeterService) SayHello(c *gin.Context)  {
     foo := c.DefaultQuery("foo","def")
     g, err := s.uc.CreateGreeter(c, &greeter.Greeter{Hello: foo})
 
     if err != nil {
        s := http.StatusInternalServerError
-       c.JSON(s,gin.H{g})
+       c.JSON(s ,gin.H{"rep":g.Hello})
     }else{
        s := http.StatusOK
-       c.JSON(s,gin.H{g})
+       c.JSON(s,gin.H{"rep":g.Hello})
     }
 
 }

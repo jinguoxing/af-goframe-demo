@@ -2,16 +2,17 @@ package repository
 
 import (
     "af-goframe-demo/dddDemo/domain/greeter"
+    "af-goframe-demo/dddDemo/infrastructure/conf"
     "context"
 )
 
 type greeterRepo struct {
-    data *Data
+    data *conf.Data
     //log  *log.Helper
 }
 
 // NewGreeterRepo .
-func NewGreeterRepo(data *Data) greeter.GreeterRepo {
+func NewGreeterRepo(data *conf.Data) greeter.GreeterRepo {
     return &greeterRepo{
         data: data,
        // log:  log.NewHelper(logger),

@@ -9,13 +9,22 @@ package main
 import (
 	"af-go-frame"
 	"af-goframe-demo/dddDemo/adapter/controller"
+	greeter2 "af-goframe-demo/dddDemo/adapter/controller/greeter"
+	"af-goframe-demo/dddDemo/domain/greeter"
 	"af-goframe-demo/dddDemo/infrastructure/conf"
+	"af-goframe-demo/dddDemo/infrastructure/repository"
 )
 
 // Injectors from wire.go:
 
 func InitApp(server *conf.Server, data *conf.Data) (*af_go_frame.App, func(), error) {
-	restServer := controller.NewHttpServer(server)
+	greeterRepo := repository.NewGreeterRepo(data)
+	greeterUsecase := greeter.NewGreeterUsecase(greeterRepo)
+	greeterService := greeter2.NewGreeterService(greeterUsecase)
+	router := &controller.Router{
+		GreeterApi: greeterService,
+	}
+	restServer := controller.NewHttpServer(server, router)
 	app := newApp(restServer)
 	return app, func() {
 	}, nil
