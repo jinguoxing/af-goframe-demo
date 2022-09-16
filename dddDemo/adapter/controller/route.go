@@ -1,16 +1,13 @@
 package controller
 
 import (
-    "AF-Excel/adapter/controller/user"
+    "af-goframe-demo/dddDemo/adapter/controller/greeter"
     "github.com/gin-gonic/gin"
 )
 
+
 func Routes(r *gin.Engine){
 
-   // container := r.GetContainer()
-   // configService := container.MustMake(contract.ConfigKey).(contract.Config)
-
-
-    user.RegisterRoutes(r)
+    greeter.RegisterRoutes(r)
 
 }

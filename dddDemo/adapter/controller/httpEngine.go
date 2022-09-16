@@ -1,8 +1,21 @@
 package controller
 
 import (
+    "af-go-frame/core/transport/rest"
+    "af-goframe-demo/dddDemo/infrastructure/conf"
     "github.com/gin-gonic/gin"
 )
+
+
+
+func NewHttpServer(c *conf.Server)*rest.Server{
+
+    engine := NewHttpEngine()
+
+    httpSrv :=  rest.NewServer(engine,rest.Address(c.Http.Addr))
+
+    return httpSrv
+}
 
 // NewHttpEngine 创建了一个绑定了路由的Web引擎
 func NewHttpEngine() (*gin.Engine) {
@@ -10,8 +23,6 @@ func NewHttpEngine() (*gin.Engine) {
     gin.SetMode(gin.ReleaseMode)
     // 默认启动一个Web引擎
     r := gin.New()
-    // 设置了Engine
-  //  r.SetContainer(container)
 
     // 默认注册recovery中间件
     r.Use(gin.Recovery())

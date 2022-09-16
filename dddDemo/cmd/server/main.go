@@ -1,19 +1,14 @@
 package main
 
 import (
-    "AF-Excel/adapter/controller"
+    "af-go-frame/core/config"
+    "af-go-frame/core/config/file"
     af_go_frame "af-go-frame"
-    //"af-go-frame/core/container"
-    "af-go-frame/core/transport/rest"
-    "fmt"
+    "af-goframe-demo/dddDemo/infrastructure/conf"
+    "flag"
 
-    // "os"
-   // "os/signal"
-   // "syscall"
-   // "time"
-   //"net/http"
-   // "context"
-   // "log"
+    "af-go-frame/core/transport/rest"
+
 )
 
 
@@ -22,6 +17,8 @@ var (
     Name ="af_ddd_demo"
     // Version is the version of the compiled software.
     Version = "1.0"
+
+    flagconf string
 )
 
 func newApp(hs *rest.Server) *af_go_frame.App{
@@ -32,40 +29,40 @@ func newApp(hs *rest.Server) *af_go_frame.App{
         )
 }
 
-func main(){
+func init() {
+    flag.StringVar(&flagconf, "conf", "./config/config.yaml", "config path, eg: -conf config.yaml")
+}
 
+func main(){
+    flag.Parse()
    // c := container.NewAFContainer()
 
+    c := config.New(
+        config.WithSource(
+            file.NewSource(flagconf),
+        ),
+    )
+    if err := c.Load(); err != nil {
+        panic(err)
+    }
+
+    var bc conf.Bootstrap
+    if err := c.Scan(&bc); err != nil {
+        panic(err)
+    }
 
 
-     engine := controller.NewHttpEngine()
 
-       // c.Bind(&httpx.AFKernelProvider{HttpEngine: engine})
+    app,  cleanup, err := InitApp(bc.Server, bc.Data)
+    if err != nil {
+       panic(err)
+    }
+    defer cleanup()
 
-   // gin.SetMode(gin.ReleaseMode)
-    // 默认启动一个Web引擎
-    //engine := gin.New()
-    //// 设置了Engine
-    ////r.SetContainer(container)
-    //
-    //// 默认注册recovery中间件
-    //engine.Use(gin.Recovery())
-    //
-    //// 业务绑定路由操作
-    ////Routes(engine)
-    //controller.Routes(engine)
-
-       httpSrv :=  rest.NewServer(engine,rest.Address(":8000"))
-
-
-       app :=  af_go_frame.New(
-            af_go_frame.Name(Name),
-            af_go_frame.Server(httpSrv),
-        )
-
-        if err := app.Run(); err != nil {
-            fmt.Errorf("error:",err)
-        }
+    // start and wait for stop signal
+    if err := app.Run(); err != nil {
+       panic(err)
+    }
 
 }
 
