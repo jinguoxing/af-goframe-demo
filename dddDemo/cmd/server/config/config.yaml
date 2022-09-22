@@ -13,4 +13,6 @@ data:
     addr: 127.0.0.1:6379
     read_timeout: 0.2s
     write_timeout: 0.2s
-
+log:
+  outputPath: test_log
+  mode: file

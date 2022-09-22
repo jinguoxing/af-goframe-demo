@@ -1,35 +1,90 @@
 package greeter
 
 import (
-
-    "af-goframe-demo/dddDemo/domain/greeter"
-    "github.com/gin-gonic/gin"
-    "net/http"
+	"af-goframe-demo/dddDemo/domain/greeter"
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
+	"net/http"
 )
 
 type GreeterService struct {
+	uc     *greeter.GreeterUsecase
+	logger *zap.Logger
+}
 
-    uc *greeter.GreeterUsecase
+func NewGreeterService(uc *greeter.GreeterUsecase, logger *zap.Logger) *GreeterService {
+
+	return &GreeterService{uc: uc, logger: logger}
 
 }
 
+// SayHello godoc
+// @Summary      sayhello example
+// @Description  do sayhello
+// @Tags         Greeter
+// @Accept       json
+// @Produce      json
+// @Success      200  {string} string
+// @Failure      400  {string} string
+// @Failure      404  {string} string
+// @Failure      500  {string} string
+// @Router       /greeter/sayhello [get]
+func (s *GreeterService) SayHello(c *gin.Context) {
+	foo := c.DefaultQuery("foo", "def")
+	g, err := s.uc.CreateGreeter(c, &greeter.Greeter{Hello: foo})
 
-func NewGreeterService(uc *greeter.GreeterUsecase) *GreeterService{
-
-    return &GreeterService{uc:uc}
-
+	if err != nil {
+		res := http.StatusInternalServerError
+		s.logger.Error("controller/greeter/greeter.go line 30")
+		c.JSON(res, gin.H{"rep": "err"})
+	} else {
+		res := http.StatusOK
+		s.logger.Info("controller/greeter/greeter.go line 34")
+		c.JSON(res, gin.H{"rep": g.Hello})
+	}
 }
 
-func (s *GreeterService) SayHello(c *gin.Context)  {
-    foo := c.DefaultQuery("foo","def")
-    g, err := s.uc.CreateGreeter(c, &greeter.Greeter{Hello: foo})
+type greeterExample struct {
+	Name string `json:"greeter_name"`
+	ID   string `json:"greeter_id"`
+}
 
-    if err != nil {
-       s := http.StatusInternalServerError
-       c.JSON(s ,gin.H{"rep":g.Hello})
-    }else{
-       s := http.StatusOK
-       c.JSON(s,gin.H{"rep":g.Hello})
-    }
+var examples []*greeterExample
 
+// 提交 列表
+
+// PostExample godoc
+// @Summary      PostExample Summary
+// @Description  PostExample Description
+// @Accept       json
+// @Produce      json
+// @Tags         Greeter1
+// @Param        message  body      greeterExample  true  "Greeter Info"
+// @Success      200      {string}  string         "success"
+// @Failure      500      {string}  string         "fail"
+// @Router       /greeter/post [post]
+func (s *GreeterService) PostExample(c *gin.Context) {
+	var e = &greeterExample{}
+
+	if err := c.ShouldBind(e); err != nil {
+		fmt.Println(e)
+		return
+	}
+	//s.uc.CreateGreeter
+	examples = append(examples, e)
+	fmt.Println(examples)
+}
+
+// ListExample godoc
+// @Summary      ListExample Summary
+// @Description  ListExample Description
+// @Accept       json
+// @Produce      json
+// @Tags         Greeter2
+// @Success      200      {array}  greeterExample
+// @Failure      500      {string}  string         "fail"
+// @Router       /greeter/list [get]
+func (s *GreeterService) ListExample(c *gin.Context) {
+	c.JSON(200, examples)
 }

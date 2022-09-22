@@ -1,0 +1,131 @@
+basePath: 这里写base path
+definitions:
+  greeter.greeterExample:
+    properties:
+      greeter_id:
+        type: string
+      greeter_name:
+        type: string
+    type: object
+  user.loginParam:
+    properties:
+      password:
+        minLength: 6
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+host: 这里写接口服务的host
+info:
+  contact:
+    email: support@swagger.io
+    name: 这里写联系人信息
+    url: http://www.swagger.io/support
+  description: 这里写描述信息
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: 这里写标题 [*必须]
+  version: 1.0 [*必须]
+paths:
+  /greeter/list:
+    get:
+      consumes:
+      - application/json
+      description: ListExample Description
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/greeter.greeterExample'
+            type: array
+        "500":
+          description: fail
+          schema:
+            type: string
+      summary: ListExample Summary
+      tags:
+      - Greeter2
+  /greeter/post:
+    post:
+      consumes:
+      - application/json
+      description: PostExample Description
+      parameters:
+      - description: Greeter Info
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/greeter.greeterExample'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            type: string
+        "500":
+          description: fail
+          schema:
+            type: string
+      summary: PostExample Summary
+      tags:
+      - Greeter1
+  /greeter/sayhello:
+    get:
+      consumes:
+      - application/json
+      description: do sayhello
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: sayhello example
+      tags:
+      - Greeter
+  /user/login:
+    post:
+      consumes:
+      - application/json
+      description: 用户登录接口
+      parameters:
+      - description: login with param
+        in: body
+        name: loginParam
+        required: true
+        schema:
+          $ref: '#/definitions/user.loginParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: token
+          schema:
+            type: string
+      summary: 用户登录
+      tags:
+      - user
+swagger: "2.0"

@@ -13,14 +13,15 @@ import (
 	"af-goframe-demo/dddDemo/domain/greeter"
 	"af-goframe-demo/dddDemo/infrastructure/conf"
 	"af-goframe-demo/dddDemo/infrastructure/repository"
+	"go.uber.org/zap"
 )
 
 // Injectors from wire.go:
 
-func InitApp(server *conf.Server, data *conf.Data) (*af_go_frame.App, func(), error) {
-	greeterRepo := repository.NewGreeterRepo(data)
-	greeterUsecase := greeter.NewGreeterUsecase(greeterRepo)
-	greeterService := greeter2.NewGreeterService(greeterUsecase)
+func InitApp(server *conf.Server, data *conf.Data, logger *zap.Logger) (*af_go_frame.App, func(), error) {
+	greeterRepo := repository.NewGreeterRepo(data, logger)
+	greeterUsecase := greeter.NewGreeterUsecase(greeterRepo, logger)
+	greeterService := greeter2.NewGreeterService(greeterUsecase, logger)
 	router := &controller.Router{
 		GreeterApi: greeterService,
 	}
